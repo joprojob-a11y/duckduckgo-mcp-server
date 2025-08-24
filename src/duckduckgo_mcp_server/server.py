@@ -64,6 +64,12 @@ class DuckDuckGoSearcher:
             output.append(f"   Summary: {result.snippet}")
             output.append("")  # Empty line between results
 
+        output.append(
+            "If any of the search results are relevant, ALWAYS use `fetch_content` to retrieve the full content of the page using the `URL`." \
+            " The `summary` is just a brief snippet and can have missing information." \
+            " If not, try to search again using a more canonical term, or search for a different term that is more likely to contain the relevant information."
+        )
+
         return "\n".join(output)
 
     async def search(
@@ -133,7 +139,7 @@ class DuckDuckGoSearcher:
             await ctx.info(f"Successfully found {len(results)} results")
             return results
 
-        except httpx.TimeoutException:
+        except httpx.TimeoutError:
             await ctx.error("Search request timed out")
             return []
         except httpx.HTTPError as e:
@@ -194,7 +200,7 @@ class WebContentFetcher:
             )
             return text
 
-        except httpx.TimeoutException:
+        except httpx.TimeoutError:
             await ctx.error(f"Request timed out for URL: {url}")
             return "Error: The request timed out while trying to fetch the webpage."
         except httpx.HTTPError as e:
